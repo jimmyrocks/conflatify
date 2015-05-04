@@ -28,7 +28,7 @@ var pathToStream = function(osmPath) {
     dataStream = request(osmPath);
   } else if (type === '<xml' || type === '<?xm') {
     dataStream = new Stream.Readable();
-    dataStream._read = function noop() {}; // redundant? see update below
+    dataStream._read = function noop() {};
     dataStream.push(osmPath);
     dataStream.push(null);
   } else {
