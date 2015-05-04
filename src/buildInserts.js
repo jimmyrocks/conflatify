@@ -1,4 +1,5 @@
 var dataWrap = require('datawrap'),
+  fs = require('fs'),
   getOsmData = require('./getOsmData');
 
 // To make the db for this function use the following code
@@ -6,14 +7,19 @@ var dataWrap = require('datawrap'),
 // 'type': 'spatialite'
 // });
 
-var addParams = function(str, p) {
-  return dataWrap.fandlebars(str, p, function(v) {
-    return v && v.replace ? v.replace(/(')/g, '$1$1') : v;
-  });
-};
 
-module.exports = function(osmData, tableName) {
+module.exports = function(osmData, tableName, defaults) {
   return new dataWrap.Bluebird(function(resolve, reject) {
+
+    var addParams = function(str, p) {
+      if (str.substr(0, defaults.fileDesignator.length) === defaults.fileDesignator) {
+        str = fs.readFileSync(defaults.rootDirectory + '/' + str.substr(defaults.fileDesignator.length), defaults.fileOptions.encoding);
+      }
+      return dataWrap.fandlebars(str, p, function(v) {
+        return v && v.replace ? v.replace(/(')/g, '$1$1') : v;
+      });
+    };
+
     var params = {
       tableName: tableName + '_geoms',
       tagTableName: tableName + '_tags',
@@ -23,8 +29,8 @@ module.exports = function(osmData, tableName) {
       .catch(reject)
       .then(function(d) {
         var queryList = [];
-        queryList.push(addParams('CREATE TABLE {{tableName}} (osmid BIGINT, type CHAR, meta TEXT, the_geom GEOMETRY)', params));
-        queryList.push(addParams('CREATE TABLE {{tagTableName}} (osmid BIGINT, k TEXT, v TEXT)', params));
+        queryList.push(addParams('file:///createGeomTable.sql', params));
+        queryList.push(addParams('file:///createTagsTable.sql', params));
         d.features.map(function(feature) {
           var paramFeature = {};
           for (var item in feature.properties) {
@@ -32,9 +38,9 @@ module.exports = function(osmData, tableName) {
           }
           paramFeature.type = paramFeature.type.substr(0, 1);
           paramFeature.geometry = JSON.stringify(feature.geometry);
-          queryList.push(
-            addParams('INSERT INTO {{tableName}} VALUES ', params) +
-            addParams('({{id}}, \'{{type}}\', \'{{meta}}\', GeomFromGeoJSON(\'{{geometry}}\'));', paramFeature));
+          paramFeature.tableName = params.tableName;
+          paramFeature.tagTableName = params.tagTableName;
+          queryList.push(addParams('file:///insertGeometry.sql', paramFeature));
         });
         resolve(queryList);
       });
