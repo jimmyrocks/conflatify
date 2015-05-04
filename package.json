@@ -1,0 +1,25 @@
+{
+  "name": "conflatify",
+  "version": "0.0.1",
+  "description": "An interface to make micro tasks for conflation",
+  "keywords": ["conflate"],
+  "author": "Jim McAndrew <jim@loc8.us>",
+  "license": "Public Domain",
+  "contributors": [{
+    "name": "Jim McAndrew",
+    "email": "jim@loc8.us"
+  }],
+  "scripts": {
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jimmyrocks/datawrap"
+  },
+  "dependencies": {
+    "request": "2.55.0",
+    "osmtogeojson": "2.2.5",
+    "datawrap": "git+https://github.com/jimmyrocks/datawrap#spatialite"
+  },
+  "engine": "node 0.10.35"
+}
