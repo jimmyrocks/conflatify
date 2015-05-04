@@ -1,0 +1,8 @@
+{
+  "rootDirectory": "{{env.PWD}}/sql",
+  "delimiter": ";",
+  "fileDesignator": "file:///",
+  "fileOptions": {
+    "encoding": "utf8"
+  }
+}
