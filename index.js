@@ -17,7 +17,8 @@ var taskList = [{
 }, {
   'name': 'input insert list',
   'task': buildInserts,
-  'params': ['./osm/edison_buildings.osm', 'input', defaults]
+  // TODO: Take this as an input!
+  'params': ['./osm/grant_village.osm', 'input', defaults]
 }, {
   'name': 'insert inserts to db',
   'task': db.runQuery,
@@ -46,6 +47,7 @@ var taskList = [{
   'task': db.runQuery,
   'params': ['file:///getPolygonOverlaps.sql', {
     tableNameA: 'input_geoms',
+    tagTableNameA: 'input_tags',
     tableNameB: 'osm_geoms'
   }]
 }];
@@ -53,7 +55,7 @@ var taskList = [{
 datawrap.runList(taskList, 'Main Task')
   .then(function(a) {
     console.log('ok');
-    console.log(a[a.length - 1]);
+    console.log(JSON.stringify(a[a.length - 1]));
   }).catch(function(e) {
     throw e;
   });
