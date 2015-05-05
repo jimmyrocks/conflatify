@@ -26,7 +26,6 @@ var createTask = function(instruction, newGeometry, osmGeometry) {
 };
 
 module.exports = function() {
-  console.log(arguments);
   var dbResults = [];
   // Allow multiple arrays to be pushed in and have them all merged into dbResults
   var mergeResults = function(arr) {
@@ -36,7 +35,7 @@ module.exports = function() {
   };
   for (var arg in arguments) {
     if (Array.isArray(arguments[arg])) {
-      mergeResults(arguments[arg]);
+      mergeResults(arguments[arg][0]);
     }
   }
   var taskList = [];
