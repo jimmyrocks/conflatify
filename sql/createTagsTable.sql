@@ -1,5 +1,6 @@
 CREATE TABLE {{tagTableName}} (
-  "osmi"d BIGINT,
+  "osmid" BIGINT,
   "k" TEXT,
-  "v" TEXT
+  "v" TEXT,
+  "interesting" BOOLEAN
 );
