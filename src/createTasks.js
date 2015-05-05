@@ -25,7 +25,20 @@ var createTask = function(instruction, newGeometry, osmGeometry) {
   return task;
 };
 
-module.exports = function(dbResults) {
+module.exports = function() {
+  console.log(arguments);
+  var dbResults = [];
+  // Allow multiple arrays to be pushed in and have them all merged into dbResults
+  var mergeResults = function(arr) {
+    arr.map(function(a) {
+      dbResults.push(a);
+    });
+  };
+  for (var arg in arguments) {
+    if (Array.isArray(arguments[arg])) {
+      mergeResults(arguments[arg]);
+    }
+  }
   var taskList = [];
   return new datawrap.Bluebird(function(fulfill, reject) {
     taskList = dbResults.map(function(row) {
@@ -71,7 +84,7 @@ module.exports = function(dbResults) {
   });
 };
 
-var test = function(d) {
+/*var test = function(d) {
   module.exports(d)
     .catch(function(e) {
       console.log('There was an error');
@@ -82,4 +95,4 @@ var test = function(d) {
     });
 };
 
-// test(require('../osm/matchJson'));
+test(require('../osm/matchJson'));*/
