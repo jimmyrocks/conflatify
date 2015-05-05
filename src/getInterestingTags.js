@@ -5,10 +5,10 @@ module.exports = function(presets, tagTableName, onlySearchable) {
   ];
   var mapGeometryTypes = function(type) {
     var translations = {
-      'point': 'Point',
-      'vertex': 'Point',
-      'line': 'LineString',
-      'area': 'Polygon'
+      'point': 'POINT',
+      'vertex': 'POINT',
+      'line': 'LINESTRING',
+      'area': 'POLYGON'
     };
     return translations[type];
   };
