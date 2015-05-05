@@ -1,9 +1,10 @@
-var buildInserts = require('./src/buildInserts');
-var createTasks = require('./src/createTasks');
-var datawrap = require('datawrap');
-var datawrapDefaults = require('./defaults');
-var getTagBoundsFromOverpass = require('./src/getTagBoundsFromOverpass');
+var buildInserts = require('./src/buildInserts'),
+  createTasks = require('./src/createTasks'),
+  datawrap = require('datawrap'),
+  datawrapDefaults = require('./defaults'),
+  getTagBoundsFromOverpass = require('./src/getTagBoundsFromOverpass');
 
+var sourceFile = process.argv[2];
 var defaults = datawrap.fandlebars.obj(datawrapDefaults, global.process);
 
 // Set up a db in memory for this
@@ -19,7 +20,7 @@ var taskList = [{
   'name': 'input insert list',
   'task': buildInserts,
   // TODO: Take this as an input!
-  'params': ['./osm/grant_village.osm', 'input', defaults]
+  'params': [sourceFile, 'input', defaults]
 }, {
   'name': 'insert inserts to db',
   'task': db.runQuery,
@@ -60,7 +61,6 @@ var taskList = [{
 
 datawrap.runList(taskList, 'Main Task')
   .then(function(a) {
-    console.log('ok');
     console.log(JSON.stringify(a[a.length - 1]));
   }).catch(function(e) {
     throw e;
