@@ -1,6 +1,7 @@
 var buildInserts = require('./src/buildInserts');
 var datawrap = require('datawrap');
 var datawrapDefaults = require('./defaults');
+var getTagBoundsFromOverpass = require('./src/getTagBoundsFromOverpass');
 
 var defaults = datawrap.fandlebars.obj(datawrapDefaults, global.process);
 
@@ -10,6 +11,10 @@ var db = datawrap({
 }, defaults);
 
 var taskList = [{
+  'name': 'initialize database',
+  'task': db.runQuery,
+  'params': ['file:///initializeDb.sql']
+}, {
   'name': 'input insert list',
   'task': buildInserts,
   'params': ['./osm/edison_buildings.osm', 'input', defaults]
@@ -18,27 +23,30 @@ var taskList = [{
   'task': db.runQuery,
   'params': ['{{input insert list}}']
 }, {
-  'name': 'Get bounds for input',
+  'name': 'tagBounds',
   'task': db.runQuery,
-  'params': ['file:///getMbrs.sql', {
-    tableName: 'input'
+  'params': ['file:///getTagBounds.sql', {
+    tableName: 'input_geoms',
+    tagTableName: 'input_tags'
   }]
 }, {
-  'name': 'osm data insert list',
-  'task': function(a, b, c) {
-    var newA = './osm/example_download.osm'; // Dev, so we don't hit the server constantly
-    return buildInserts(newA, b, c);
-  },
-  'params': ['{{Get bounds for input}}', 'osm', defaults]
+  'name': 'OverpassData',
+  'task': getTagBoundsFromOverpass,
+  'params': ['{{tagBounds}}']
+}, {
+  'name': 'osmInsertList',
+  'task': buildInserts,
+  'params': ['{{OverpassData}}', 'osm', defaults]
 }, {
   'name': 'insert inserts to db',
   'task': db.runQuery,
-  'params': ['{{osm data insert list}}']
+  'params': ['{{osmInsertList}}']
 }, {
-  'name': 'Get bounds for input',
+  'name': 'Get Overlaps',
   'task': db.runQuery,
-  'params': ['file:///getMbrs.sql', {
-    tableName: 'osm'
+  'params': ['file:///getPolygonOverlaps.sql', {
+    tableNameA: 'input_geoms',
+    tableNameB: 'osm_geoms'
   }]
 }];
 
@@ -47,6 +55,5 @@ datawrap.runList(taskList, 'Main Task')
     console.log('ok');
     console.log(a[a.length - 1]);
   }).catch(function(e) {
-    console.log('err', e);
-    // throw e;
+    throw e;
   });
