@@ -1,4 +1,5 @@
 var buildInserts = require('./src/buildInserts');
+var createTasks = require('./src/createTasks');
 var datawrap = require('datawrap');
 var datawrapDefaults = require('./defaults');
 var getTagBoundsFromOverpass = require('./src/getTagBoundsFromOverpass');
@@ -43,6 +44,7 @@ var taskList = [{
   'task': db.runQuery,
   'params': ['{{osmInsertList}}']
 }, {
+  // TODO: Right now we only do polygons, but we can do more!
   'name': 'Get Overlaps',
   'task': db.runQuery,
   'params': ['file:///getPolygonOverlaps.sql', {
@@ -50,6 +52,10 @@ var taskList = [{
     tagTableNameA: 'input_tags',
     tableNameB: 'osm_geoms'
   }]
+}, {
+  'name': 'Create MR Task',
+  'task': createTasks,
+  'params': ['{{Get Overlaps}}']
 }];
 
 datawrap.runList(taskList, 'Main Task')
