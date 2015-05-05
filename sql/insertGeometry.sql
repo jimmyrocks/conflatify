@@ -7,5 +7,5 @@ INSERT INTO {{tableName}} (
   {{id}},
   '{{type}}',
   '{{meta}}',
-  ST_MakeValid(GeomFromGeoJSON('{{geometry}}'))
+  SetSRID(ST_MakeValid(GeomFromGeoJSON('{{geometry}}')), 4326)
 );
