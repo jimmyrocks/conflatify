@@ -5,14 +5,14 @@ SELECT
     SELECT group_concat("k",'<f2e7651932b5400eb3ed2b358ae00767>')
     FROM "{{tagTableNameA}}" "TAK"
     WHERE "A"."osmid" = "TAK"."osmid" AND
-      substr("k", 0, 4) != 'nps:'
+      substr("k", 1, 4) != 'nps:'
     ORDER BY "k"
   ) AS "new_keys",
   (
     SELECT group_concat("v",'<f2e7651932b5400eb3ed2b358ae00767>')
     FROM "{{tagTableNameA}}" "TAV"
     WHERE "A"."osmid" = "TAV"."osmid" AND
-      substr("k", 0, 4) != 'nps:'
+      substr("k", 1, 4) != 'nps:'
     ORDER BY "k"
   ) AS "new_values",
   AsGeoJSON(A.the_geom) as new_geom,
