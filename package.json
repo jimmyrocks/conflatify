@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/jimmyrocks/datawrap"
+    "url": "http://github.com/jimmyrocks/conflatify"
   },
   "dependencies": {
     "request": "2.55.0",
